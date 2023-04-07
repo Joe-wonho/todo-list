@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 import TodoItem from './TodoItem';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { removeTodo, doneTodo, modifyTodo } from '../actions/index';
+// import { useState } from 'react';
+// import useFetch from '../util/useFetch';
 //밑에있는 아이템을 담을 컨테이너
 const TodoListContainer = styled.div`
   display: flex;
@@ -10,11 +13,40 @@ const TodoListContainer = styled.div`
 `;
 
 const TodoList = () => {
+  // const innitialTodos = useFetch('http://localhost:3001/todos');
+  const todos = useSelector((state) => state.todos);
+
+  const dispatch = useDispatch();
+
+  const handleRemove = (id) => {
+    dispatch(removeTodo(id));
+  };
+
+  const handleDone = (id, done) => {
+    dispatch(doneTodo(id, !done));
+  };
+
+  const handleModify = (id, text) => {
+    dispatch(modifyTodo(id, text));
+  };
+
   return (
     <>
       <TodoListContainer>
-        <TodoItem text="1번째 작성된 글입니다." done={true}></TodoItem>
-        <TodoItem text="2번째 작성된 글입니다." done={false}></TodoItem>
+        {todos &&
+          todos.map((todo) => {
+            return (
+              <TodoItem
+                key={todo.id}
+                id={todo.id}
+                done={todo.done}
+                text={todo.text}
+                handleRemove={handleRemove}
+                handleDone={handleDone}
+                handleModify={handleModify}
+              ></TodoItem>
+            );
+          })}
       </TodoListContainer>
     </>
   );

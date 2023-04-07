@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 import TodoList from '../components/TodoList';
 import { FiPlus } from 'react-icons/fi';
+
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { createTodo } from '../actions/index';
 const Container = styled.div`
   width: 90vw;
   display: flex;
@@ -33,13 +37,27 @@ const Container = styled.div`
   }
 `;
 
-const Home = () => {
+const Home = ({ todos }) => {
+  const dispatch = useDispatch();
+
+  const [text, setText] = useState('');
+  const handleChange = (e) => {
+    setText(e.target.value);
+  };
+  const handleClick = () => {
+    const todo = {
+      text: text,
+    };
+    dispatch(createTodo(todo));
+    setText('');
+  };
+
   return (
     <>
       <Container>
         <form className="TodoInsert">
-          <input placeholder="할 일을 입력하세요." maxLength={70}></input>
-          <button type="submit">
+          <input onChange={handleChange} value={text} placeholder="할 일을 입력하세요." maxLength={70}></input>
+          <button type="button" onClick={handleClick}>
             <FiPlus />
           </button>
         </form>

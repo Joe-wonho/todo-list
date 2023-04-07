@@ -1,52 +1,45 @@
-const initailTodos = [
-  {
-    id: 1,
-    text: '프로젝트 생성하기',
-    done: true,
-  },
-  {
-    id: 2,
-    text: '컴포넌트 스타일링하기',
-    done: true,
-  },
-  {
-    id: 3,
-    text: 'Context 만들기',
-    done: false,
-  },
-  {
-    id: 4,
-    text: '기능 구현하기',
-    done: false,
-  },
-];
-// https://react.vlpt.us/mashup-todolist/02-manage-state.html
-// const todoReducer = (state=initailTodos, action) => {
-//     switch (action.type) {
-//         case ADD_TO_CART:
-//           //TODO
-//           return Object.assign({}, state, {
-//             cartItems: [...state.cartItems, action.payload],
-//           });
+import initailTodos from './initialTodos';
+import { CREATE, REMOVE, DONE, MODIFY } from '../actions/index';
 
-//         // case REMOVE_FROM_CART:
-//         //   //TODO
-//         //   let currentItem = state.cartItems.filter((el) => el.itemId !== action.payload.itemId);
-//         //   return Object.assign({}, state, {
-//         //     cartItems: currentItem,
-//         //   });
+let initTodos = {
+  todos: [],
+};
 
-//         // case SET_QUANTITY:
-//         //   let idx = state.cartItems.findIndex((el) => el.itemId === action.payload.itemId);
-//         //   //TODO
-//         //   return {
-//         //     ...state,
-//         //     cartItems: [...state.cartItems.slice(0, idx), action.payload, ...state.cartItems.slice(idx + 1)],
-//         //   };
+//Reducer
+const todoReducer = (state = initailTodos, action) => {
+  switch (action.type) {
+    case CREATE:
+      return Object.assign({}, state, {
+        todos: [...state.todos, action.payload],
+      });
+    case REMOVE:
+      return Object.assign({}, state, {
+        todos: state.todos.filter((todo) => todo.id !== action.payload.id),
+      });
 
-//         default:
-//           return state;
-//       }
-// };
+    case DONE:
+      let idx = state.todos.findIndex((todo) => todo.id === action.payload.id);
+      state.todos[idx] = {
+        ...state.todos[idx],
+        done: action.payload.done,
+      };
+      return Object.assign({}, state, {
+        todos: [...state.todos.slice(0, idx), state.todos[idx], ...state.todos.slice(idx + 1)],
+      });
 
-// export default todoReducer;
+    case MODIFY:
+      let midx = state.todos.findIndex((todo) => todo.id === action.payload.id);
+      state.todos[midx] = {
+        ...state.todos[midx],
+        text: action.payload.text,
+      };
+      return Object.assign({}, state, {
+        todos: [...state.todos.slice(0, midx), state.todos[midx], ...state.todos.slice(midx + 1)],
+      });
+
+    default:
+      return state;
+  }
+};
+
+export default todoReducer;
